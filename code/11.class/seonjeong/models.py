@@ -1,4 +1,5 @@
 __all__ = (
+    'Subway',
     'SubwaySandwichOrder',
     'Worker',
     'Customer',
@@ -7,15 +8,59 @@ __all__ = (
 
 class Subway:
     """서브웨이 매장"""
-
-    def __init__(self, money=None):
+    def __init__(self, name, money=None):
+        self.__name = name
         self.money = 10000000 if money is None else money
+        print('{} 생성'.format(self.name))
+
+    @property
+    def name(self):
+        return '서브웨이 {}'.format(self.__name)
+
+
+class Worker:
+    """서브웨이 직원"""
+    def __init__(self, subway, name):
+        self.subway = subway
+        self.name = name
+        print('{}의 {}직원 생성'.format(
+            self.subway.name,
+            self.name,
+        ))
+
+    @staticmethod
+    def notice_price(order):
+        """매개변수로 주어진 order의 가격을 알려줌"""
+        print('주문하신 샌드위치 {}의 가격은 {}원 입니다'.format(
+            # order.SET_DICT[order.is_set],
+            order.get_set_text(),
+            order.total_price
+        ))
+
+    def get_paid(self, order, paid):
+        '손님이 낸 돈 받기'
+        if order.total_price == paid:
+            self.subway.money += paid
+            print('샌드위치값으로 {}원을 받았습니다.\n매장의 시재는 {}입니다.'.format(
+                paid,
+                self.subway.money,
+            ))
+        elif order.total_price > paid:
+            print('돈을 더내주세요')
+        else:
+            self.subway.money += order.total_price
+            print('샌드위치값으로 {}원을 받았습니다.\n매장의 시재는 {}입니다.\n거스름돈은 {}입니다'.format(
+                paid,
+                self.subway.money,
+                paid - order.total_price
+            ))
 
 
 class Customer:
-    def __init__(self, number):
+    def __init__(self, number, name):
         self.money = 100000
         self.number = number
+        self.name = name
 
 
 class SubwaySandwichOrder:
@@ -24,6 +69,13 @@ class SubwaySandwichOrder:
         True: '세트메뉴',
         False: '단품'
     }
+
+    def get_set_text(self):
+        """
+        자신의 is_set Boolean값에 따라 다른 텍스트를 리턴
+        :return: '단품' 또는 '세트메뉴'
+        """
+        return self.SET_DICT[self.is_set]
 
     def __init__(self, customer, bread_type, meat, sauce, price, is_set_menu=None):
         '주문시 필수적으로 골라야 하는 것들'
@@ -40,7 +92,7 @@ class SubwaySandwichOrder:
             self.bread_type,
             self._meat,
             self.sauce,
-            '{}'.format(self.SET_DICT[self.is_set]),
+            '{}'.format(self.get_set_text()),
             self.price))
 
     def choose_set(self, is_set):
@@ -48,7 +100,7 @@ class SubwaySandwichOrder:
         self.is_set = is_set
         print('주문번호 {}번 고객님은 {}를 선택했습니다'.format(
             self.customer.number,
-            '{}'.format(self.SET_DICT[self.is_set]),
+            '{}'.format(self.get_set_text()),
         ))
 
     def choose_cookie(self, cookie_type):
@@ -58,6 +110,11 @@ class SubwaySandwichOrder:
             print('주문번호 {}번 고객님은 {}쿠키를 선택했습니다.'.format(self.customer.number, self.cookie_type))
         else:
             print('단품고객은 쿠키를 선택할 수 없습니다.')
+
+    @property
+    def total_price(self):
+        """세트메뉴일때와 아닐때의 주문 총액 리턴"""
+        return self.price + 1900 if self.is_set else self.price
 
     @property
     def meat(self):
@@ -78,23 +135,7 @@ class SubwaySandwichOrder:
             print('그런 메뉴는 없습니다.')
 
 
-class Worker(SubwaySandwichOrder):
-    '서브웨이 직원 클래스'
-    worker_money = 100000000
 
-    def __init__(self, worker_money):
-        '계산을 하기 위해 돈 속성을 추가해준다.'
-        self.work_money = worker_money
-
-    def notice_price(self, price):
-        '가격 정보 알리기'
-        self.price = price
-        print('주문하신 샌드위치의 가격은 {}원 입니다'.format(self.price))
-
-    def get_paid(cls, price):
-        '손님이 낸 돈 받기'
-        cls.worker_money += price
-        print('샌드위치값으로 {}원을 받았습니다'.format(price))
 
 # class Customer(SubwaySandwichOrder):
 #     customer_money = 10000
