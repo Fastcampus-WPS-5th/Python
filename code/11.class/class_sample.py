@@ -14,9 +14,6 @@ class Shop:
             self.address
         ))
 
-    # get_shop_type, set_shop_type
-    # 의 2가지 인스턴스 메서드 생성
-    # 각각이 하는일은 __shop_type의 내용을 가져오거나 바꾸는 것
     @property
     def shop_type(self):
         return self.__shop_type
@@ -40,3 +37,7 @@ class Shop:
     @staticmethod
     def print_hello():
         print('hello')
+
+
+class PCroom(Shop):
+    pass
