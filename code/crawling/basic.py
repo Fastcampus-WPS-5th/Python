@@ -9,6 +9,7 @@ class Node(object):
     """
     _pattern_tag_base = r'<{tag}.*?>\s*([.\w\W]*?)\s*</{tag}>'
     _pattern_tag_content = r'<[^!]*?>([.\w\W]*)</.*?>'
+    _pattern_tag_class = r'^\s*<.*?class\s*=[\'"](.*?)[\'"]>'
 
     def __init__(self, source):
         self.source = source
@@ -51,16 +52,22 @@ class Node(object):
         해당 Node가 가진 class속성의 value를 리턴 (문자열)
         :return: 
         """
-        pass
+        pattern = re.compile(self._pattern_tag_class)
+        m = re.search(pattern, self.source)
+        if m:
+            return m.group(1)
 
 
 with open('example.html') as f:
     html = Node(f.read())
 
 node_div = html.find_tag('div')
+print(node_div.class_)
 node_p_list = node_div.find_tag('p')
-for node_p in node_p_list:
-    print(node_p.content)
+# for node_p in node_p_list:
+#     print(type(node_p))
+#     print(node_p)
+    # print(node_p.content)
 
 
 # pattern_tag_base = r'<{tag}.*?>\s*([.\w\W]*?)\s*</{tag}>'
