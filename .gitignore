@@ -11,6 +11,7 @@ media/
 static_root/
 **/django_app/static/css/
 Dockerfile.*
+*.DS_Store
 
 # bower packages
 bower_components/
