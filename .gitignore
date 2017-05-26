@@ -1,4 +1,5 @@
 # Project custom
+code/crawling/**/*.jpg
 code/**/*2.py
 .envrc
 front/

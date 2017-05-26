@@ -22,9 +22,9 @@ class NaverWebtoonCrawler:
         :param episode_num: 
         :return: 
         """
+        dir_path = '{}/{}'.format(self.webtoon_id, episode_num)
         def make_episode_dir():
             # 이미지를 저장하기 위한 폴더 생성
-            dir_path = '{}/{}'.format(self.webtoon_id, episode_num)
             print(dir_path)
             # exists로 이미 생성하려는 폴더가 있는지 검사
             if not os.path.exists(dir_path):
@@ -79,11 +79,30 @@ class NaverWebtoonCrawler:
         img_list = get_img_tag_list()
 
         # 리스트를 순회하며 각 img태그의 src속성을 출력 및 다운로드
-        for img in img_list:
+        for index, img in enumerate(img_list):
+            # 이미지 주소에 get요청
             print(img['src'])
-            
+            headers = {'Referer': url_detail}
+            response = requests.get(img['src'], headers=headers)
 
-        return '해당 에피소드'
+            # 요청 결과 (이미지파일)의 binary데이터를 파일에 쓴다
+            img_path = '{}/{:02}.jpg'.format(
+                dir_path,
+                index
+            )
+            with open(img_path, 'wb') as f:
+                f.write(response.content)
+
+        # 해당 에피소드를 볼 수 있는 HTML파일을 생성
+        """
+        <html>
+            <img src="651673/1/00.jpg">
+            <img src="651673/1/01.jpg">
+            <img src="651673/1/02.jpg">
+            <img src="651673/1/03.jpg">
+        </html>
+        """
+        print('Crawling complete')
 
     def crawl_all_episodes(self):
         return ''
